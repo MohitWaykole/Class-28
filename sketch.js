@@ -5,6 +5,7 @@ const Bodies = Matter.Bodies;
 var engine, world;
 var box1, pig1;
 var backgroundImg,platform;
+var gameState = "attached";
 
 function preload() {
     backgroundImg = loadImage("sprites/bg.png");
@@ -34,16 +35,15 @@ function setup(){
     log4 = new Log(760,320,150, PI/7);
     log5 = new Log(870,320,150, -PI/7);
 
-    bird = new Bird(100,300);
+    bird = new Bird(200,300);
 
+    sling = new Chain(bird.body, {x:200, y:270});
 }
 
 function draw(){
     background(backgroundImg);
     Engine.update(engine);
-    console.log(box2.body.position.x);
-    console.log(box2.body.position.y);
-    console.log(box2.body.angle);
+
     box1.display();
     box2.display();
     ground.display();
@@ -60,5 +60,25 @@ function draw(){
     log5.display();
 
     bird.display();
+    sling.display();
     platform.display();
+}
+
+function mouseDragged(){
+    if (gameState != "flying"){
+        Matter.Body.setPosition(bird.body, {x:mouseX, y:mouseY});
+    }
+}
+
+function mouseReleased(){
+    gameState = "flying";
+    sling.fly();
+}
+
+function keyPressed(){
+    if(keyCode === UP_ARROW){
+        Matter.Body.setPosition(bird.body, {x:200, y:300});
+        sling.attach(bird.body);
+        gameState = "attached";
+    }
 }
